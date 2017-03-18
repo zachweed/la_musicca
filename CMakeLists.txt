@@ -1,18 +1,12 @@
-cmake_minimum_required (VERSION 2.6)
-
-project (LaMusicca)
-set (LaMusicca_VERSION_MINOR 0.1)
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/la_musicca_config.h.in"
-  "${PROJECT_BINARY_DIR}/la_musicca_config.h"
-)
-
-include_directories("${PROJECT_SOURCE_DIR}/yaml_cpp")
-add_subdirectory (YamlCpp)
+cmake_minimum_required(VERSION 2.8.9)
+project (la_musicca)
 
 
+file(GLOB INCLUDES "include/*.h")
+file(GLOB SOURCES "src/*.cpp")
+add_executable(la_musicca ${SOURCES} ${INCLUDES})
 
-add_library(YamlCpp yaml-cpp.cxx)
-target_link_libraries (LaMusicca YamlCpp)
-add_executable(LaMusicca la_musicca.cpp)
+find_package(Boost 1.36.0 REQUIRED)
+include_directories(include ${Boost_INCLUDE_DIRS})
+
+set(SOURCE_FILES ${SOURCES})

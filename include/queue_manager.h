@@ -6,7 +6,10 @@
 
 class QueueManager {
   std::string queue_;
+
+public:
+  QueueManager();
 };
 
 
-#endif LA_MUSICCA_QUEUE_MANAGER_H
+#endif // LA_MUSICCA_QUEUE_MANAGER_H

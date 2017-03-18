@@ -6,6 +6,8 @@
 
 class Library {
   std::string contents_;
+public:
+  Library();
 };
 
-#endif LA_MUSICCA_LIBRARY_H
+#endif // LA_MUSICCA_LIBRARY_H
