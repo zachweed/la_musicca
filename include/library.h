@@ -4,9 +4,11 @@
 #define LA_MUSICCA_LIBRARY_H
 
 class Library {
-  std::string contents_;
 public:
-  Library(char* library_path);
+  Library(std::string* library_path);
+  bool build();
+private:
+  std::string location_;
 };
 
 #endif // LA_MUSICCA_LIBRARY_H

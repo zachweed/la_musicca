@@ -1,18 +1,34 @@
 #include <dirent.h>
 #include "library.h"
 
-Library::Library(char* library_path) {
-  const char* PATH = library_path;
-  DIR *starting_dir = opendir(PATH);
-  struct dirent *album = readdir(starting_dir);
+Library::Library(std::string* library_path) {
+  location_ = *library_path;
+}
 
-  printf("%s\n", album->d_name);
-
-  while(album != NULL) {
-    if (album->d_type == DT_DIR)
-      // We need to recursively crawl the dir
-      // structure, in order to build up a DB of tags.
-    album = readdir(starting_dir);
+bool Library::build() {
+  DIR *album_dir;
+  struct dirent *album;
+  if( (album_dir = opendir(this->location_.c_str()) ) == NULL) {
+    std::cout << "Error(" << errno << ") opening " << album_dir << std::endl;
   }
-  closedir(starting_dir);
+
+  while( (album = readdir(album_dir) ) != NULL) {
+    if (album->d_type == DT_DIR) {
+      bool should_move_dirs = false;
+      std::string excluded_dirs[2] = {".", ".."};
+      std::string album_name = (std::string)album->d_name;
+
+      for(int i = 0; i <= 2; i++){
+        if(album_name.compare(excluded_dirs[i]) == 0){
+          should_move_dirs = true;
+        }
+      }
+      if(!should_move_dirs){
+        std::cout << album_name << "\n";
+      }
+    }
+  }
+  closedir(album_dir);
+
+  return true;
 }

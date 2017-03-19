@@ -1,4 +1,5 @@
 #include "library.h"
+#include <string>
 #include "iostream"
 
 int main(int argc, char *argv[]) {
@@ -7,7 +8,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  char media_path = *argv[1];
+  std::string media_path(argv[1]);
   Library library (&media_path);
+  library.build();
   return 0;
 };
