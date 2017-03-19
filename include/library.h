@@ -1,4 +1,3 @@
-#include "dirent.h"
 #include "iostream"
 
 #ifndef LA_MUSICCA_LIBRARY_H
@@ -7,7 +6,7 @@
 class Library {
   std::string contents_;
 public:
-  Library();
+  Library(char* library_path);
 };
 
 #endif // LA_MUSICCA_LIBRARY_H

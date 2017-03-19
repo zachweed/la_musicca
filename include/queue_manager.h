@@ -1,11 +1,11 @@
-#include "iostream"
+// #include "iostream"
 
 
 #ifndef LA_MUSICCA_QUEUE_MANAGER_H
 #define LA_MUSICCA_QUEUE_MANAGER_H
 
 class QueueManager {
-  std::string queue_;
+  // std::string queue_;
 
 public:
   QueueManager();
