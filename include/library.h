@@ -9,6 +9,7 @@ public:
   bool build();
 private:
   std::string location_;
+  bool should_move_dirs(std::string dir_name);
 };
 
 #endif // LA_MUSICCA_LIBRARY_H
