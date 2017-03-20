@@ -1,12 +1,12 @@
-#include <regex>
 #include <dirent.h>
 #include "library.h"
+#include "album.h"
 
 Library::Library(std::string* library_path) {
   location_ = *library_path;
 }
 
-bool Library::build() {
+void Library::build() {
   DIR *album_dir;
   struct dirent *album;
   if( (album_dir = opendir(this->location_.c_str()) ) == NULL) {
@@ -17,13 +17,19 @@ bool Library::build() {
     if (album->d_type == DT_DIR) {
       std::string album_name = (std::string)album->d_name;
       if(!should_move_dirs(album_name)){
-        std::cout << (std::string)album->d_name << "\n";
+        std::cout << "Found directory: " << album_name << "\n";
+        entries_.push_back(album_name);
+
+        // if(possibly_invalid_artist(album_name)) {
+          // Default to an ID3 tag (if it exists)
+          //   When:
+          //     - Said tag is not NULL
+          //     - Said tag exceeds an acceptable amount of diff
+        // }
       }
     }
   }
   closedir(album_dir);
-
-  return true;
 }
 
 bool Library::should_move_dirs(std::string dir_name) {
