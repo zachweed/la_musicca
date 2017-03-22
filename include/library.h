@@ -7,7 +7,7 @@
 class Library {
 public:
   Library(std::string* library_path);
-  void build();
+  std::vector<std::string> build();
 private:
   std::vector<std::string> entries_;
   std::string location_;
