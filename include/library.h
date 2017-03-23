@@ -9,12 +9,11 @@
 class Library {
 public:
   Library(std::string* library_path){ location_ = *library_path; };
-  std::vector<Album*> build();
+  std::vector<std::string*> build();
 private:
-  std::vector<Album*> entries_;
+  std::vector<std::string*> entries_;
   std::string location_;
-  bool should_move_dirs(boost::filesystem::path dir_name);
-  std::string album_name_for_path(boost::filesystem::path dir);
+  bool should_move_dirs(std::string dir_name);
 };
 
 #endif // LA_MUSICCA_LIBRARY_H

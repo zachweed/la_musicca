@@ -1,48 +1,26 @@
-#include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 #include "library.h"
 
 using std::cout;
 using namespace boost::filesystem;
 
-std::vector<Album*> Library::build(){
-  path current_dir = location_.c_str();
-  boost::filesystem::directory_iterator iter(current_dir), eod;
+std::vector<std::string*> Library::build(){
+  for(boost::filesystem::directory_iterator end, dir(location_); dir != end; ++dir){
+    std::string file_name = dir->path().string();
 
-  BOOST_FOREACH(path dir, std::make_pair(iter, eod)){
-    if(exists(dir)) {
-      if(is_directory(dir)) {
-        if(!should_move_dirs(dir)) {
-          std::string album_name = album_name_for_path(dir);
-          std::cout << album_name << "\n";
-          Album alb;
-          alb.artist_ = album_name;
-          entries_.push_back(&alb);
-        } else {
-          std::cout << "Skipping directory:" << dir << "\n";
-        }
+    if(!should_move_dirs(file_name) && is_directory(dir->path())) {
+      for(boost::filesystem::recursive_directory_iterator end, nested_dir(file_name); nested_dir != end; ++nested_dir){
+        std::cout << nested_dir->path().string() << "\n";
       }
     }
   }
 }
 
-bool Library::should_move_dirs(path dir) {
+bool Library::should_move_dirs(std::string dir) {
   bool         should_move = false;
-  boost::regex matcher("(\\.|\\..|\\.\\w+.*)\\z");
-  if(boost::regex_match(dir.filename().string(), matcher)){
+  boost::regex matcher(".*(\\/\\.[a-zA-Z+]+|\\/\\.|\\/\\\\.\\\\.).*");
+  if(boost::regex_match(dir, matcher)){
     should_move = true;
   }
   return should_move;
-}
-
-std::string Library::album_name_for_path(path dir) {
-  boost::regex matcher("/\\.*\\z");
-  boost::cmatch what_matched;
-
-  if(boost::regex_match(dir.filename().c_str(), what_matched, matcher)){
-    std::cout << what_matched;
-    return (std::string)what_matched[1];
-  } else {
-    return "";
-  }
 }
