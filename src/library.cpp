@@ -5,7 +5,7 @@ using std::cout;
 using namespace boost::filesystem;
 
 std::vector<std::string*> Library::build(){
-  possible_albums_for_directory(location_);
+  std::vector<std::string> album_list = possible_albums();
 }
 
 bool Library::should_move_dirs(std::string dir) {
@@ -17,11 +17,11 @@ bool Library::should_move_dirs(std::string dir) {
   return should_move;
 }
 
-std::vector<std::string> Library::possible_albums_for_directory(std::string media_dir){
+std::vector<std::string> Library::possible_albums(){
   std::string fake_string;
   std::vector<std::string> fake_vector;
 
-  for(boost::filesystem::directory_iterator end, dir(media_dir); dir != end; ++dir){
+  for(boost::filesystem::directory_iterator end, dir(location_); dir != end; ++dir){
     std::string file_name = dir->path().string();
 
     if(!should_move_dirs(file_name) && is_directory(dir->path())) {
@@ -42,15 +42,17 @@ std::vector<std::string> Library::possible_albums_for_directory(std::string medi
 }
 
 std::string Library::id3_tag_for_file(std::string path_to_file){
-  std::ifstream file_stream(path_to_file);
-  std::vector<char> buffer(128);
   std::string tags;
+  std::ifstream file_stream(path_to_file);
+  char* buffer = new char[128];
 
   if(file_stream){
-    file_stream.seekg(buffer.size(), std::ios_base::end);
-    file_stream.read(&buffer[0], buffer.size());
-    std::string tags(buffer.begin(), buffer.end());
+    file_stream.seekg(-128, std::ios_base::end);
+    file_stream.readsome(buffer, 128);
+    file_stream.close();
+    tags = buffer;
   }
+
   return tags;
 }
 

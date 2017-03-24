@@ -14,7 +14,7 @@ private:
   std::vector<std::string*> entries_;
   std::string location_;
   bool should_move_dirs(std::string dir_name);
-  std::vector<std::string> possible_albums_for_directory(std::string dir);
+  std::vector<std::string> possible_albums();
   std::string id3_tag_for_file(std::string path_to_file);
 };
 
