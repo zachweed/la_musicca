@@ -6,7 +6,7 @@ file(GLOB INCLUDES "include/*.h")
 file(GLOB SOURCES "src/*.cpp")
 add_executable(la_musicca ${SOURCES} ${INCLUDES})
 
-find_package(Boost 1.61.0 COMPONENTS filesystem regex)
+find_package(Boost 1.47.0 COMPONENTS filesystem regex)
 include_directories(include ${Boost_INCLUDE_DIRS})
 
 if(Boost_FOUND)
