@@ -1,3 +1,4 @@
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/regex.hpp>
 #include "library.h"
 
@@ -5,7 +6,7 @@ using std::cout;
 using namespace boost::filesystem;
 
 std::vector<std::string*> Library::build(){
-  std::vector<std::string> album_list = possible_albums();
+  possible_albums_for_directory(location_);
 }
 
 bool Library::should_move_dirs(std::string dir) {
@@ -17,20 +18,19 @@ bool Library::should_move_dirs(std::string dir) {
   return should_move;
 }
 
-std::vector<std::string> Library::possible_albums(){
+std::vector<std::string> Library::possible_albums_for_directory(std::string media_dir){
   std::string fake_string;
   std::vector<std::string> fake_vector;
 
-  for(boost::filesystem::directory_iterator end, dir(location_); dir != end; ++dir){
+  for(boost::filesystem::directory_iterator end, dir(media_dir); dir != end; ++dir){
     std::string file_name = dir->path().string();
 
     if(!should_move_dirs(file_name) && is_directory(dir->path())) {
       for(boost::filesystem::recursive_directory_iterator end, nested_dir(file_name); nested_dir != end; ++nested_dir){
-        boost::regex mp3_matcher(".*\\.mp3");
-        std::string file_path = nested_dir->path().string();
+        boost::filesystem::path possible_mp3(nested_dir->path());
 
-        if(boost::regex_match(file_path, mp3_matcher)){
-          std::cout << id3_tag_for_file(file_path) << "\n";
+        if(possible_mp3.extension() == ".mp3"){
+          std::cout << id3_tag_for_file(possible_mp3) << "\n";
         }
 
       }
@@ -41,19 +41,19 @@ std::vector<std::string> Library::possible_albums(){
   return fake_vector;
 }
 
-std::string Library::id3_tag_for_file(std::string path_to_file){
-  std::string tags;
-  std::ifstream file_stream(path_to_file);
-  char* buffer = new char[128];
+std::string Library::id3_tag_for_file(boost::filesystem::path path_to_file){
+  int tag_size = 128;
+  char tags[tag_size];
+  boost::filesystem::ifstream file_stream(path_to_file);
+  std::string fake_string;
 
-  if(file_stream){
-    file_stream.seekg(-128, std::ios_base::end);
-    file_stream.readsome(buffer, 128);
-    file_stream.close();
-    tags = buffer;
-  }
+  file_stream.seekg(-(tag_size), std::ios::end);
+  file_stream.read(reinterpret_cast<char *>(&tags), tag_size);
+  file_stream.close();
 
-  return tags;
+  printf(tags);
+
+  return fake_string;
 }
 
 
