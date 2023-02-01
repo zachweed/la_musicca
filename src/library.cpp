@@ -9,36 +9,32 @@ std::vector<std::string*> Library::build(){
   possible_albums_for_directory(location_);
 }
 
-bool Library::should_move_dirs(std::string dir) {
-  bool         should_move = false;
-  boost::regex matcher(".*(\\/\\.[a-zA-Z+]+|\\/\\.|\\/\\\\.\\\\.).*");
-  if(boost::regex_match(dir, matcher)){
-    should_move = true;
+bool Library::build() {
+  DIR *album_dir;
+  struct dirent *album;
+  if( (album_dir = opendir(this->location_.c_str()) ) == NULL) {
+    std::cout << "Error(" << errno << ") opening " << album_dir << std::endl;
   }
-  return should_move;
-}
 
-std::vector<std::string> Library::possible_albums_for_directory(std::string media_dir){
-  std::string fake_string;
-  std::vector<std::string> fake_vector;
+  while( (album = readdir(album_dir) ) != NULL) {
+    if (album->d_type == DT_DIR) {
+      bool should_move_dirs = false;
+      std::string excluded_dirs[2] = {".", ".."};
+      std::string album_name = (std::string)album->d_name;
 
-  for(boost::filesystem::directory_iterator end, dir(media_dir); dir != end; ++dir){
-    std::string file_name = dir->path().string();
-
-    if(!should_move_dirs(file_name) && is_directory(dir->path())) {
-      for(boost::filesystem::recursive_directory_iterator end, nested_dir(file_name); nested_dir != end; ++nested_dir){
-        boost::filesystem::path possible_mp3(nested_dir->path());
-
-        if(possible_mp3.extension() == ".mp3"){
-          std::cout << id3_tag_for_file(possible_mp3) << "\n";
+      for(int i = 0; i <= 2; i++){
+        if(album_name.compare(excluded_dirs[i]) == 0){
+          should_move_dirs = true;
         }
-
+      }
+      if(!should_move_dirs){
+        std::cout << album_name << "\n";
       }
     }
   }
+  closedir(album_dir);
 
-  fake_vector.push_back(fake_string);
-  return fake_vector;
+  return true;
 }
 
 std::string Library::id3_tag_for_file(boost::filesystem::path path_to_file){
